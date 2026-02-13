@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ani ❤️</title>
+
+<style>
+  .photo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+  box-shadow: 0 0 20px rgba(255,77,109,0.6);
+  }
+body {
+  margin: 0;
+  height: 100vh;
+  background:
+    linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.9)),
+    url("ani.jpg") center/cover no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
+
+/* Soft stars overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, white, transparent),
+    radial-gradient(1.5px 1.5px at 70% 80%, white, transparent),
+    radial-gradient(1px 1px at 40% 60%, white, transparent);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.card {
+  background: rgba(255,255,255,0.92);
+  padding: 22px;
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+  position: relative;
+  z-index: 2;
+  width: 85%;
+  max-width: 320px;
+  <img src="ani.jpg" class="photo">
+}
+
+h1 {
+  color: #ff4d6d;
+  margin-bottom: 10px;
+}
+
+p {
+  font-size: 16px;
+}
+
+button {
+  padding: 12px 22px;
+  font-size: 15px;
+  border-radius: 25px;
+  border: none;
+  cursor: pointer;
+  margin: 8px;
+}
+
+#yes { background: #22c55e; color: white; }
+#no  { background: #ef4444; color: white; position: absolute; }
+
+#message {
+  display: none;
+  font-size: 20px;
+  color: #ff4d6d;
+  margin-top: 15px;
+}
+
+/* Hearts */
+.heart {
+  position: fixed;
+  bottom: -10px;
+  font-size: 22px;
+  animation: float 6s linear forwards;
+  filter: drop-shadow(0 0 6px pink);
+}
+
+@keyframes float {
+  to { transform: translateY(-110vh); opacity: 0; }
+}
+
+/* Fireworks canvas */
+canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="fireworks"></canvas>
+
+<div class="card">
+  <h1>Ani ❤️</h1>
+  <p>Will you be my girlfriend?</p>
+
+  <button id="yes" onclick="yesClick()">Yes 💖</button>
+  <button id="no" onmouseover="moveNo()">No 💔</button>
+
+  <div id="message">
+    YAYYYY 🎉💍<br>
+    You just made my world complete ❤️
+  </div>
+</div>
+
+<audio id="music" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
+</audio>
+
+<script>
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+let particles = [];
+
+function firework(x, y) {
+  for (let i = 0; i < 100; i++) {
+    particles.push({
+      x, y,
+      vx: (Math.random() - 0.5) * 10,
+      vy: (Math.random() - 0.5) * 10,
+      life: 120,
+      size: Math.random() * 3 + 2,
+      color: `hsl(${Math.random()*360},100%,70%)`
+    });
+  }
+}
+
+function animate() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life--;
+
+    ctx.fillStyle = p.color;
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+    ctx.fill();
+
+    if (p.life <= 0) particles.splice(i,1);
+  }
+  requestAnimationFrame(animate);
+}
+animate();
+
+function moveNo() {
+  const no = document.getElementById("no");
+  const card = document.querySelector(".card");
+
+  const maxX = card.clientWidth - no.offsetWidth;
+  const maxY = card.clientHeight - no.offsetHeight;
+
+  no.style.left = Math.random() * maxX + "px";
+  no.style.top  = Math.random() * maxY + "px";
+}
+
+function yesClick() {
+  document.getElementById("message").style.display = "block";
+  document.getElementById("music").play();
+
+  for (let i = 0; i < 12; i++) {
+    firework(Math.random()*canvas.width, Math.random()*canvas.height);
+  }
+
+  setInterval(() => {
+    firework(Math.random()*canvas.width, Math.random()*canvas.height);
+  }, 500);
+}
+
+/* Floating hearts */
+setInterval(() => {
+  const heart = document.createElement("div");
+  heart.className = "heart";
+  heart.innerHTML = "❤️";
+  heart.style.left = Math.random()*100+"vw";
+  document.body.appendChild(heart);
+  setTimeout(()=>heart.remove(),6000);
+}, 400);
+</script>
+
+</body>
+</html>
